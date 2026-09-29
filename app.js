@@ -27,6 +27,8 @@ let lastSent = '';
 function log(name){
   if(!ENDPOINT || !name || name === lastSent) return;
   lastSent = name;
+  const h = document.querySelector('.hint');
+  if(h){ h.textContent = 'تم تسجيل الاسم ✓'; h.style.opacity = .9; }
   const fd = new FormData();
   fd.append('name', name);
   fd.append('invite', INVITE);
