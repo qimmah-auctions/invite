@@ -23,20 +23,36 @@ img.src = IMG;
 input.addEventListener('input', draw);
 if(document.fonts) document.fonts.ready.then(draw);
 
+let lastSent = '', timer;
 function log(name){
-  if(!ENDPOINT) return;
+  if(!ENDPOINT || !name || name === lastSent) return;
+  lastSent = name;
   const fd = new FormData();
   fd.append('name', name);
   fd.append('invite', INVITE);
-  fetch(ENDPOINT, {method:'POST', mode:'no-cors', body:fd}).catch(()=>{});
+  // sendBeacon ينجح حتى لو غادرت الصفحة أو بدأ التحميل (مهم على الجوال)
+  if(!(navigator.sendBeacon && navigator.sendBeacon(ENDPOINT, fd)))
+    fetch(ENDPOINT, {method:'POST', mode:'no-cors', body:fd, keepalive:true}).catch(()=>{});
 }
+
+// يسجّل الاسم بعد ما يتوقف الكتابة، وأيضاً عند التحميل
+input.addEventListener('input', ()=>{
+  clearTimeout(timer);
+  const v = input.value.trim();
+  if(v.length >= 3) timer = setTimeout(()=>log(v), 1500);
+});
 
 dl.addEventListener('click', ()=>{
   const name = input.value.trim();
   if(!name) return;
+  clearTimeout(timer);
   log(name);
-  const a = document.createElement('a');
-  a.download = 'دعوة-'+name+'.jpg';
-  a.href = c.toDataURL('image/jpeg', 0.92);
-  a.click();
+  c.toBlob(b=>{
+    const url = URL.createObjectURL(b);
+    const a = document.createElement('a');
+    a.download = 'دعوة-'+name+'.jpg';
+    a.href = url;
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(url), 4000);
+  }, 'image/jpeg', 0.92);
 });
