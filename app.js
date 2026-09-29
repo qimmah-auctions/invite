@@ -23,7 +23,7 @@ img.src = IMG;
 input.addEventListener('input', draw);
 if(document.fonts) document.fonts.ready.then(draw);
 
-let lastSent = '', timer;
+let lastSent = '';
 function log(name){
   if(!ENDPOINT || !name || name === lastSent) return;
   lastSent = name;
@@ -35,17 +35,12 @@ function log(name){
     fetch(ENDPOINT, {method:'POST', mode:'no-cors', body:fd, keepalive:true}).catch(()=>{});
 }
 
-// يسجّل الاسم بعد ما يتوقف الكتابة، وأيضاً عند التحميل
-input.addEventListener('input', ()=>{
-  clearTimeout(timer);
-  const v = input.value.trim();
-  if(v.length >= 3) timer = setTimeout(()=>log(v), 1500);
-});
+// يسجّل الاسم عند الخروج من الخانة، وأيضاً عند التحميل
+input.addEventListener('change', ()=>log(input.value.trim()));
 
 dl.addEventListener('click', ()=>{
   const name = input.value.trim();
   if(!name) return;
-  clearTimeout(timer);
   log(name);
   c.toBlob(b=>{
     const url = URL.createObjectURL(b);
