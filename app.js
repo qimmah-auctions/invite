@@ -1,5 +1,5 @@
 // عنوان Google Apps Script (نقطة تسجيل الأسماء في قوقل شيت)
-const ENDPOINT = '';
+const ENDPOINT = 'https://script.google.com/macros/s/AKfycbynH4BRox1xk4AbMXAmExoOmnXn7GsoJUFXgrMmHwV_dpYJgHe2ngIZeDEvjrFid7kj/exec';
 
 const c = document.getElementById('c'), ctx = c.getContext('2d');
 const input = document.getElementById('name'), dl = document.getElementById('dl');
